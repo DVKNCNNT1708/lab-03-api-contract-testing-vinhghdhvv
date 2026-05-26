@@ -31,10 +31,9 @@ jobs:
           npx prism mock contracts/ai-vision.openapi.yaml --port 4011 > prism-vision.log 2>&1 &
 
       - name: Wait for mock servers
-        run: 
+        run: |
           sleep 10
           npx wait-on http://127.0.0.1:4010/health http://127.0.0.1:4011/health --timeout 60000
-
       - name: Run Newman contract tests
         run: npm run test:mock
 
