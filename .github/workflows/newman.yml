@@ -27,8 +27,8 @@ jobs:
 
       - name: Start Prism mock servers
         run: |
-          npx prism mock contracts/iot-ingestion.openapi.yaml --port 4010 > prism-iot.log 2>&1 &
-          npx prism mock contracts/ai-vision.openapi.yaml --port 4011 > prism-vision.log 2>&1 &
+          nohup npx prism mock contracts/iot-ingestion.openapi.yaml -p 4010 --host 0.0.0.0 > prism-iot.log 2>&1 &
+          nohup npx prism mock contracts/ai-vision.openapi.yaml -p 4011 --host 0.0.0.0 > prism-vision.log 2>&1 &
 
       - name: Wait for mock servers
         run: |
