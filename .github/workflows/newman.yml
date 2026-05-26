@@ -2,9 +2,9 @@ name: Newman Contract Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   newman:
@@ -25,15 +25,18 @@ jobs:
       - name: Lint OpenAPI contracts
         run: npm run lint:contracts
 
-      - name: Start Prism mock servers
-        run: |
-          nohup npx prism mock contracts/iot-ingestion.openapi.yaml -p 4010 --host 0.0.0.0 > prism-iot.log 2>&1 &
-          nohup npx prism mock contracts/ai-vision.openapi.yaml -p 4011 --host 0.0.0.0 > prism-vision.log 2>&1 &
+      - name: Start Prism IoT mock
+        run: nohup npx prism mock contracts/iot-ingestion.openapi.yaml -p 4010 --host 0.0.0.0 > prism-iot.log 2>&1 &
 
-      - name: Wait for mock servers
-        run: |
-          sleep 10
-          npx wait-on http://127.0.0.1:4010/health http://127.0.0.1:4011/health --timeout 60000
+      - name: Start Prism Vision mock
+        run: nohup npx prism mock contracts/ai-vision.openapi.yaml -p 4011 --host 0.0.0.0 > prism-vision.log 2>&1 &
+
+      - name: Wait for IoT mock
+        run: npx wait-on http://127.0.0.1:4010/health --timeout 60000
+
+      - name: Wait for Vision mock
+        run: npx wait-on http://127.0.0.1:4011/health --timeout 60000
+
       - name: Run Newman contract tests
         run: npm run test:mock
 
